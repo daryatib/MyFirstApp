@@ -7,7 +7,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myfirstapp.domain.appdetails.AppDetails
 import com.example.myfirstapp.domain.appdetails.Category
 import com.example.myfirstapp.domain.appdetails.SimilarApp
-import com.example.myfirstapp.domain.applist.AppListItem
 import com.example.myfirstapp.presentation.appdetails.AppDetailsScreen
 import com.example.myfirstapp.presentation.applist.AppListScreen
 
@@ -15,47 +14,37 @@ import com.example.myfirstapp.presentation.applist.AppListScreen
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    // Список приложений для главного экрана
-    val mockApps = listOf(
-        AppListItem("1", "ВКонтакте", "Социальная сеть", "Социальные", "https://placekitten.com/200/200"),
-        AppListItem("2", "Telegram", "Мессенджер", "Общение", "https://placekitten.com/201/200"),
-        AppListItem("3", "Яндекс Карты", "Навигация", "Карты", "https://placekitten.com/202/200"),
-        AppListItem("4", "Сбербанк", "Банк", "Финансы", "https://placekitten.com/203/200"),
-        AppListItem("5", "Кинопоиск", "Кино", "Развлечения", "https://placekitten.com/204/200")
-    )
-
-    // Список из 9 приложений для Витрины
+    // Список из 9 приложений для Витрины (пока оставим здесь)
     val mockSimilarApps = List(9) { index ->
         SimilarApp(
             id = "similar-$index",
-            name = "Приложение ${index + 1}", // <-- ИСПРАВЛЕНО: теперь 1, 2, 3... 9
+            name = "Приложение ${index + 1}",
             iconUrl = "https://placekitten.com/${210 + index}/200"
         )
     }
 
     // Функция для получения карточки по ID (захардкожено)
     fun getAppDetails(id: String): AppDetails {
-        val app = mockApps.find { it.id == id } ?: mockApps.first()
+        // В реальном приложении здесь был бы запрос в репозиторий
         return AppDetails(
-            id = app.id,
-            name = app.name,
-            developer = "Разработчик ${app.name}",
+            id = id,
+            name = "Приложение $id",
+            developer = "Разработчик",
             category = Category.APP,
             ageRating = 12,
             size = 150.5f,
-            iconUrl = app.iconUrl, // Берем иконку из списка
+            iconUrl = "https://placekitten.com/300/300",
             screenshotUrlList = listOf(
-                "https://placekitten.com/800/450", // <-- ИСПРАВЛЕНО
-                "https://placekitten.com/801/450"  // <-- ИСПРАВЛЕНО
+                "https://placekitten.com/800/450",
+                "https://placekitten.com/801/450"
             ),
-            description = "Это описание для приложения ${app.name}. Здесь мог бы быть красивый текст."
+            description = "Описание для приложения с ID $id."
         )
     }
 
     NavHost(navController = navController, startDestination = "app_list") {
         composable("app_list") {
             AppListScreen(
-                apps = mockApps,
                 onAppClick = { app ->
                     navController.navigate("app_details/${app.id}")
                 }
@@ -74,7 +63,7 @@ fun AppNavigation() {
                 onReadMoreClick = {},
                 onDeveloperClick = {},
                 onSimilarAppDownloadClick = {
-                    navController.popBackStack() // Возврат на список при клике из Витрины
+                    navController.popBackStack()
                 },
             )
         }

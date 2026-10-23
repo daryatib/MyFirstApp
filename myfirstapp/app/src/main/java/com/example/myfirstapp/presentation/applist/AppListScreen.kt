@@ -7,40 +7,52 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.myfirstapp.domain.applist.AppListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppListScreen(
-    apps: List<AppListItem>,
     onAppClick: (AppListItem) -> Unit,
-    modifier: Modifier = Modifier
+    viewModel: AppListViewModel = viewModel()
 ) {
+    val apps by viewModel.apps.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Подписываемся на события (Snackbar)
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Список приложений") },
                 navigationIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Иконка приложения",
-                        modifier = Modifier.padding(8.dp)
-                    )
+                    IconButton(onClick = { viewModel.onToolbarClick() }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Иконка приложения",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
-        },
-        modifier = modifier
+        }
     ) { paddingValues ->
         LazyColumn(
             contentPadding = paddingValues,

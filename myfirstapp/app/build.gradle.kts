@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.material)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 
     // Иконки и картинки
     implementation("androidx.compose.material:material-icons-extended")
