@@ -1,20 +1,38 @@
 package com.example.myfirstapp.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myfirstapp.data.applist.AppListRepositoryImpl
 import com.example.myfirstapp.domain.appdetails.AppDetails
 import com.example.myfirstapp.domain.appdetails.Category
 import com.example.myfirstapp.domain.appdetails.SimilarApp
+import com.example.myfirstapp.domain.applist.GetAppListUseCase
 import com.example.myfirstapp.presentation.appdetails.AppDetailsScreen
 import com.example.myfirstapp.presentation.applist.AppListScreen
+import com.example.myfirstapp.presentation.applist.AppListViewModel
+
+// Фабрика для создания ViewModel с зависимостями
+class AppListViewModelFactory : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(AppListViewModel::class.java)) {
+            val repository = AppListRepositoryImpl()
+            val useCase = GetAppListUseCase(repository)
+            @Suppress("UNCHECKED_CAST")
+            return AppListViewModel(useCase) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    // Список из 9 приложений для Витрины (пока оставим здесь)
     val mockSimilarApps = List(9) { index ->
         SimilarApp(
             id = "similar-$index",
@@ -23,9 +41,7 @@ fun AppNavigation() {
         )
     }
 
-    // Функция для получения карточки по ID (захардкожено)
     fun getAppDetails(id: String): AppDetails {
-        // В реальном приложении здесь был бы запрос в репозиторий
         return AppDetails(
             id = id,
             name = "Приложение $id",
@@ -44,10 +60,14 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "app_list") {
         composable("app_list") {
+            // Создаем ViewModel через фабрику
+            val viewModel: AppListViewModel = viewModel(factory = AppListViewModelFactory())
+
             AppListScreen(
                 onAppClick = { app ->
                     navController.navigate("app_details/${app.id}")
-                }
+                },
+                viewModel = viewModel
             )
         }
         composable("app_details/{appId}") { backStackEntry ->

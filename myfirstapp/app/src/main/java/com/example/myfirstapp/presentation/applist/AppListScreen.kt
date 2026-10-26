@@ -22,7 +22,7 @@ import com.example.myfirstapp.domain.applist.AppListItem
 @Composable
 fun AppListScreen(
     onAppClick: (AppListItem) -> Unit,
-    viewModel: AppListViewModel = viewModel()
+    viewModel: AppListViewModel
 ) {
     val apps by viewModel.apps.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
