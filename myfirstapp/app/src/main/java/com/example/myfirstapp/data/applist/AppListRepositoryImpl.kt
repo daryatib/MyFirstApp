@@ -4,8 +4,9 @@ import com.example.myfirstapp.domain.applist.AppListItem
 import com.example.myfirstapp.domain.applist.AppListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class AppListRepositoryImpl : AppListRepository {
+class AppListRepositoryImpl @Inject constructor() : AppListRepository {
     override fun getApps(): Flow<List<AppListItem>> = flow {
         // Имитация задержки загрузки (как будто из сети)
         kotlinx.coroutines.delay(500)

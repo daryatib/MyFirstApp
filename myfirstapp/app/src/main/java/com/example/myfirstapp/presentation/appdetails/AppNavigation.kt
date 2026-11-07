@@ -15,19 +15,7 @@ import com.example.myfirstapp.domain.applist.GetAppListUseCase
 import com.example.myfirstapp.presentation.appdetails.AppDetailsScreen
 import com.example.myfirstapp.presentation.applist.AppListScreen
 import com.example.myfirstapp.presentation.applist.AppListViewModel
-
-// Фабрика для создания ViewModel с зависимостями
-class AppListViewModelFactory : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AppListViewModel::class.java)) {
-            val repository = AppListRepositoryImpl()
-            val useCase = GetAppListUseCase(repository)
-            @Suppress("UNCHECKED_CAST")
-            return AppListViewModel(useCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AppNavigation() {
@@ -60,8 +48,7 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "app_list") {
         composable("app_list") {
-            // Создаем ViewModel через фабрику
-            val viewModel: AppListViewModel = viewModel(factory = AppListViewModelFactory())
+            val viewModel: AppListViewModel = hiltViewModel()
 
             AppListScreen(
                 onAppClick = { app ->
