@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.dagger.hilt.android") version "2.59.2"
     alias(libs.plugins.ksp)
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -69,4 +70,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitKotlinxSerialization)
+    implementation(libs.kotlinxSerializationJson)
 }
