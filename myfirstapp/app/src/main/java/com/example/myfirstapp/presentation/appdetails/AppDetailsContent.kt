@@ -46,6 +46,7 @@ fun AppDetailsContent(
         )
         Spacer(Modifier.height(16.dp))
         InstallButton(
+            installState = content.installState, // <-- Передали состояние
             onClick = onInstallClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,7 +62,7 @@ fun AppDetailsContent(
         }
         Spacer(Modifier.height(12.dp))
         ScreenshotsList(
-            screenshotUrlList = listOf("1", "2", "3"),
+            screenshotUrlList = appDetails.screenshotUrlList ?: listOf("1", "2", "3"),
             contentPadding = PaddingValues(horizontal = 16.dp),
         )
         Spacer(Modifier.height(12.dp))
@@ -86,8 +87,6 @@ fun AppDetailsContent(
                 .fillMaxWidth()
                 .padding(start = 16.dp),
         )
-
-        // --- БЛОК "ВИТРИНА" ---
         Spacer(Modifier.height(24.dp))
         HorizontalDivider(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -100,45 +99,5 @@ fun AppDetailsContent(
             modifier = Modifier.fillMaxWidth(),
         )
         Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    MyFirstAppTheme {
-        AppDetailsContent(
-            content = AppDetailsState.Content(
-                appDetails = AppDetails(
-                    id = "fa2e31b8-1234-4cf7-9914-108a170a1b01",
-                    name = "Гильдия Героев: Экшен ММО РПГ",
-                    developer = "VK Play",
-                    category = Category.GAME,
-                    ageRating = 12,
-                    size = 223.7f,
-                    screenshotUrlList = listOf(
-                        "https://picsum.photos/seed/scr1/800/450",
-                        "https://picsum.photos/seed/scr2/800/450",
-                    ),
-                    iconUrl = "https://picsum.photos/seed/icon/200",
-                    description = "Легендарный рейд героев в Фэнтези РПГ. Станьте героем гильдии и сразите мастера подземелья!"
-                ),
-                similarApps = List(9) { index ->
-                    SimilarApp(
-                        id = "similar-app-$index",
-                        name = "Приложение $index",
-                        iconUrl = "https://picsum.photos/seed/sim$index/200",
-                    )
-                },
-                descriptionCollapsed = false,
-            ),
-            onReadMoreClick = {},
-            onBackClick = {},
-            onShareClick = {},
-            onInstallClick = {},
-            onDeveloperClick = {},
-            onSimilarAppDownloadClick = {},
-            modifier = Modifier.fillMaxSize(),
-        )
     }
 }

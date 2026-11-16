@@ -4,6 +4,8 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.59.2"
     alias(libs.plugins.ksp)
     id("org.jetbrains.kotlin.plugin.serialization")
+
+
 }
 
 android {
@@ -74,4 +76,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofitKotlinxSerialization)
     implementation(libs.kotlinxSerializationJson)
+
+    // Retrofit with Kotlin serialization Converter
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
 }

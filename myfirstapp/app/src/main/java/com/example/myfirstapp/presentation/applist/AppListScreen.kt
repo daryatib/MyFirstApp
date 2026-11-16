@@ -91,12 +91,31 @@ private fun AppListItemRow(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = app.name,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Обернули название и рейтинг в Row ---
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = app.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false) // Чтобы текст не выталкивал рейтинг
+                )
+
+                // Вывод рейтинга (если он уже загрузился)
+                if (app.rating != null) {
+                    Text(
+                        text = "⭐ ${app.rating}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+            // -----------------------------------------------------------
+
             Text(
                 text = app.description,
                 style = MaterialTheme.typography.bodySmall,

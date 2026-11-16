@@ -5,40 +5,50 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.example.myfirstapp.domain.appdetails.AppDetails
-import com.example.myfirstapp.domain.appdetails.Category
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfirstapp.domain.appdetails.SimilarApp
 
 @Composable
 fun AppDetailsScreen(
-    appDetails: AppDetails,
-    similarApps: List<SimilarApp>,
+    appId: String,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
-    onInstallClick: () -> Unit,
     onReadMoreClick: () -> Unit,
     onDeveloperClick: () -> Unit,
     onSimilarAppDownloadClick: (SimilarApp) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: AppDetailsViewModel = hiltViewModel()
 ) {
+    // Загружаем данные при старте
+    LaunchedEffect(appId) {
+        viewModel.loadAppDetails(appId)
+    }
+
+    val state by viewModel.state.collectAsState()
+
     Scaffold(modifier = modifier) { contentPadding ->
-        AppDetailsContent(
-            content = AppDetailsState.Content(
-                appDetails = appDetails,
-                similarApps = similarApps,
-                descriptionCollapsed = false,
-            ),
-            onBackClick = onBackClick,
-            onShareClick = onShareClick,
-            onInstallClick = onInstallClick,
-            onReadMoreClick = onReadMoreClick,
-            onDeveloperClick = onDeveloperClick,
-            onSimilarAppDownloadClick = onSimilarAppDownloadClick,
-            modifier = Modifier
-                .fillMaxSize()
-                .safeDrawingPadding()
-                .padding(contentPadding),
-        )
+        when (val currentState = state) {
+            is AppDetailsState.Loading -> AppDetailsLoading()
+            is AppDetailsState.Error -> AppDetailsError(onRefreshClick = { viewModel.loadAppDetails(appId) })
+            is AppDetailsState.Content -> {
+                AppDetailsContent(
+                    content = currentState,
+                    onBackClick = onBackClick,
+                    onShareClick = onShareClick,
+                    onInstallClick = viewModel::onInstallClick, // Кнопка теперь работает!
+                    onReadMoreClick = onReadMoreClick,
+                    onDeveloperClick = onDeveloperClick,
+                    onSimilarAppDownloadClick = onSimilarAppDownloadClick,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .safeDrawingPadding()
+                        .padding(contentPadding),
+                )
+            }
+        }
     }
 }
